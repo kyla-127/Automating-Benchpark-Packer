@@ -67,6 +67,8 @@ build {
 
 
       "echo 'export PATH=$HOME/cmake-bin/bin:$PATH' >> /home/ec2-user/.bashrc",
+      "echo 'export PYTHONPATH=\"/opt/conda/lib/python3.9/site-packages:$PYTHONPATH\"' >> /home/ec2-user/.bashrc",
+
 
       "sudo chown -R ec2-user:ec2-user /home/ec2-user"
     ]
