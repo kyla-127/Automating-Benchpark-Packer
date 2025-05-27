@@ -1,0 +1,18 @@
+ [Unit]
+ Description=Jupyter Notebook Container
+ After=network-online.target docker.service
+ Requires=docker.service
+
+ [Service]
+ Restart=always
+ RestartSec=10
+ ExecStartPre=/bin/bash -c 'until docker info >/dev/null 2>&1; do sleep 2; done'
+ ExecStart=/usr/bin/docker run --rm --name jupyter \
+  -v /home/ec2-user:/home/jovyan \
+  -p 8888:8888 \
+  jupyter \
+  bash -c "export SHELL=/bin/bash && jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token='' --NotebookApp.password=''"
+ ExecStop=/usr/bin/docker stop jupyter
+
+ [Install]
+ WantedBy=multi-user.target
