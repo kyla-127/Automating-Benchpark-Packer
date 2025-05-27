@@ -20,8 +20,8 @@ This project automates the creation of an Amazon Machine Image (AMI) that includ
 
 If your build is successful you will have output that looks something like
     
-    ```
+    
     ==> Builds finished. The artifacts of successful builds are:
     --> caliper-benchpark.amazon-ebs.amazonlinux: AMIs were created:
     us-east-1: ami-0995bf89a8c655414
-    ```
+    
