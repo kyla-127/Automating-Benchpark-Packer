@@ -4,7 +4,7 @@ This project automates the creation of an Amazon Machine Image (AMI) that includ
 
 ## Prerequisites
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
-- [Packer](https://developer.hashicorp.com/packer/install)
+- [Packer](https://developer.hashicorp.com/packer/tutorials/aws-get-started/aws-get-started-build-image)
 - AWS credentials configured via `aws configure` or environment variables
 
 ## Build the AMI
