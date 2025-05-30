@@ -20,7 +20,7 @@ source "amazon-ebs" "amazonlinux" {
 
   source_ami_filter {
     filters = {
-      name                = "amzn2-ami-hvm-*-x86_64-gp2"
+      name                = "amzn2-ami-hvm-2.0.20250512.0-x86_64-gp2"
       root-device-type    = "ebs"
       virtualization-type = "hvm"
     }
@@ -32,45 +32,60 @@ source "amazon-ebs" "amazonlinux" {
 }
 
 build {
-  name    = "caliper-benchpark"
+  name    = "benchpark"
   sources = ["source.amazon-ebs.amazonlinux"]
-
+  
+  # Copy the custom .bashrc file
+  provisioner "file" {
+    source      = ".bashrc"
+    destination = "~/.bashrc"
+  }
+  
   provisioner "file" {
     source      = "Dockerfile"
-    destination = "/home/ec2-user/Dockerfile"
+    destination = "$HOME/Dockerfile"
   }
-
+  
   provisioner "file" {
     source      = "jupyter.service"
-    destination = "/home/ec2-user/jupyter.service"
+    destination = "$HOME/jupyter.service"
   }
-
+  
   provisioner "shell" {
     inline = [
       "sudo yum update -y",
-      "sudo yum install -y docker git curl wget gcc gcc-c++ make pip vi",
-
+      "sudo yum install -y docker git curl wget gcc gcc-c++ make pip vi openmpi mpirun",
+      
+      #Starting Docker
       "sudo systemctl enable docker",
       "sudo systemctl start docker",
 
-      "cd /home/ec2-user && git clone https://github.com/LLNL/benchpark.git",
-      "cd /home/ec2-user && sudo docker build -t jupyter .",
+      # Benchpark
+      "cd $HOME && git clone https://github.com/LLNL/benchpark.git",
 
-      "sudo mv /home/ec2-user/jupyter.service /etc/systemd/system/jupyter.service",
+      #Buiulding Jupyter Container
+      "cd $HOME && sudo docker build -t jupyter .",
+
+      # Starting Jupyter Service
+      "sudo mv $HOME/jupyter.service /etc/systemd/system/jupyter.service",
       "sudo systemctl enable jupyter.service",
 
-      "cd /home/ec2-user",
+      # Installing cmake
+      "cd $HOME",
       "wget https://github.com/Kitware/CMake/releases/download/v3.29.2/cmake-3.29.2-linux-x86_64.tar.gz",
       "tar -xzf cmake-3.29.2-linux-x86_64.tar.gz",
       "mv cmake-3.29.2-linux-x86_64 cmake-bin",
       "rm cmake-3.29.2-linux-x86_64.tar.gz",
 
+      "wget https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.6.tar.gz",
+      "tar -xzf openmpi-4.1.6.tar.gz",
+      "cd openmpi-4.1.6",
+      "./configure --prefix=$HOME/openmpi --disable-fortran",
+      "make -j$(nproc)",
+      "make install",
+      "export PATH=$HOME/openmpi/bin:$PATH",
 
-      "echo 'export PATH=$HOME/cmake-bin/bin:$PATH' >> /home/ec2-user/.bashrc",
-      "echo 'export PYTHONPATH=\"/opt/conda/lib/python3.9/site-packages:$PYTHONPATH\"' >> /home/ec2-user/.bashrc",
-
-
-      "sudo chown -R ec2-user:ec2-user /home/ec2-user"
+      "sudo chown -R ec2-user:ec2-user $HOME"
     ]
   }
 }
