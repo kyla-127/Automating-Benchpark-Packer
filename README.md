@@ -5,7 +5,7 @@ This project automates the creation of an Amazon Machine Image (AMI) that includ
 ## Current Status & Known Issues
 1. OpenMPI Installation Issue: The current build has an issue with OpenMPI not being installed properly. This affects the functionality of MPI-dependent commands within Benchpark.
 
-Next Steps for Future Development:
+## Next Steps for Future Development:
 
 1. Investigate and fix the OpenMPI installation in the Docker image build process
 1. Verify MPI functionality works correctly after installation
