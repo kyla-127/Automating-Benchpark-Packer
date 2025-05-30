@@ -85,7 +85,7 @@ build {
       "make install",
       "export PATH=$HOME/openmpi/bin:$PATH",
 
-      "sudo chown -R ec2-user:ec2-user $HOME"
+      "sudo chown -R $USER:$USER $HOME"
     ]
   }
 }
